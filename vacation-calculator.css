@@ -85,6 +85,31 @@ body {
   z-index: 1;
 }
 
+.vc-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.vc-home-link:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+.vc-home-link .logo-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 .vc-badge {
   display: inline-block;
   background: rgba(255,255,255,0.15);
@@ -398,6 +423,19 @@ body {
   padding: 32px 0 48px;
   color: var(--gray-500);
   font-size: 0.9rem;
+}
+
+.vc-footer-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.vc-footer-link:hover {
+  color: var(--accent);
 }
 
 /* ===== Responsive ===== */
