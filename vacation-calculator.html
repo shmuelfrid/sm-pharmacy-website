@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Vacation Cost Calculator</title>
+  <meta name="description" content="Plan your family vacation budget. Calculate the total cost based on days, daily costs, food, extras, and the number of people.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vacation-calculator.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="vc-hero">
+    <div class="vc-hero-bg"></div>
+    <div class="vc-container vc-hero-content">
+      <span class="vc-badge">&#9992;&#65039; Trip Budget Planner</span>
+      <h1>Family Vacation<br><span class="vc-accent">Cost Calculator</span></h1>
+      <p class="vc-hero-sub">Add your trip details below and see the total cost update instantly. Everything saves automatically &mdash; come back anytime and your numbers will be right where you left them.</p>
+    </div>
+  </header>
+
+  <!-- Calculator -->
+  <main class="vc-main">
+    <div class="vc-container">
+      <div class="vc-grid">
+
+        <!-- Inputs -->
+        <section class="vc-card vc-inputs" aria-label="Trip details">
+          <h2 class="vc-card-title">&#128221; Trip Details</h2>
+
+          <div class="vc-field">
+            <label for="people">Number of People</label>
+            <div class="vc-input-wrap">
+              <span class="vc-input-icon">&#128101;</span>
+              <input type="number" id="people" min="0" step="1" inputmode="numeric" placeholder="0">
+            </div>
+            <small class="vc-hint">How many travelers in total</small>
+          </div>
+
+          <div class="vc-field">
+            <label for="days">Number of Days</label>
+            <div class="vc-input-wrap">
+              <span class="vc-input-icon">&#128197;</span>
+              <input type="number" id="days" min="0" step="1" inputmode="numeric" placeholder="0">
+            </div>
+            <small class="vc-hint">Total length of the trip</small>
+          </div>
+
+          <div class="vc-field">
+            <label for="costPerDay">Cost Per Day</label>
+            <div class="vc-input-wrap">
+              <span class="vc-input-icon">&#127976;</span>
+              <input type="number" id="costPerDay" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </div>
+            <small class="vc-hint">Lodging &amp; daily costs &mdash; multiplied by days</small>
+          </div>
+
+          <div class="vc-field">
+            <label for="food">Food Per Person, Per Day</label>
+            <div class="vc-input-wrap">
+              <span class="vc-input-icon">&#127869;&#65039;</span>
+              <input type="number" id="food" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </div>
+            <small class="vc-hint">Multiplied by people and by days</small>
+          </div>
+
+          <div class="vc-field">
+            <label for="other">Other Costs</label>
+            <div class="vc-input-wrap">
+              <span class="vc-input-icon">&#127915;</span>
+              <input type="number" id="other" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </div>
+            <small class="vc-hint">Flights, activities, etc. &mdash; one-time total</small>
+          </div>
+
+          <button type="button" id="resetBtn" class="vc-reset">Reset All</button>
+        </section>
+
+        <!-- Results -->
+        <section class="vc-card vc-results" aria-label="Cost summary">
+          <div class="vc-total-box">
+            <span class="vc-total-label">Total Trip Cost</span>
+            <span class="vc-total-value" id="totalCost">$0.00</span>
+            <div class="vc-total-sub">
+              <div>
+                <span class="vc-sub-val" id="perPerson">$0.00</span>
+                <span class="vc-sub-label">per person</span>
+              </div>
+              <div class="vc-sub-divider"></div>
+              <div>
+                <span class="vc-sub-val" id="perDay">$0.00</span>
+                <span class="vc-sub-label">per day</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="vc-breakdown-title">Cost Breakdown</h3>
+          <ul class="vc-breakdown" id="breakdown">
+            <li>
+              <span class="vc-bd-name"><span class="vc-bd-dot" style="--dot:#0D6E3F"></span>Lodging / Daily</span>
+              <span class="vc-bd-val" id="bdLodging">$0.00</span>
+            </li>
+            <li>
+              <span class="vc-bd-name"><span class="vc-bd-dot" style="--dot:#1B9E5A"></span>Food</span>
+              <span class="vc-bd-val" id="bdFood">$0.00</span>
+            </li>
+            <li>
+              <span class="vc-bd-name"><span class="vc-bd-dot" style="--dot:#F59E0B"></span>Other</span>
+              <span class="vc-bd-val" id="bdOther">$0.00</span>
+            </li>
+          </ul>
+
+          <div class="vc-bar" id="costBar" aria-hidden="true">
+            <span class="vc-bar-seg" id="barLodging" style="background:#0D6E3F"></span>
+            <span class="vc-bar-seg" id="barFood" style="background:#1B9E5A"></span>
+            <span class="vc-bar-seg" id="barOther" style="background:#F59E0B"></span>
+          </div>
+
+          <p class="vc-saved-note"><span class="vc-saved-dot"></span> Saved automatically on this device</p>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="vc-footer">
+    <div class="vc-container">
+      <p>&#127958;&#65039; Happy travels! Made for family vacation planning.</p>
+    </div>
+  </footer>
+
+  <script src="vacation-calculator.js"></script>
+</body>
+</html>
