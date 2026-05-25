@@ -1,80 +1,92 @@
-// Mobile navigation toggle
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
+// Family Vacation Cost Calculator
+const STORAGE_KEY = 'vacationCalculator';
+const FIELDS = ['people', 'days', 'costPerDay', 'food', 'other'];
 
-navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('active');
-  navToggle.classList.toggle('active');
+const inputs = {};
+FIELDS.forEach(id => { inputs[id] = document.getElementById(id); });
+
+const money = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 });
 
-// Close mobile nav on link click
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('active');
-    navToggle.classList.remove('active');
-  });
-});
+// Read a field as a non-negative number (blank/invalid -> 0)
+function val(id) {
+  const n = parseFloat(inputs[id].value);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
 
-// Navbar scroll effect
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 50);
-});
+function calculate() {
+  const people = val('people');
+  const days = val('days');
+  const costPerDay = val('costPerDay');
+  const food = val('food');
+  const other = val('other');
 
-// Scroll-triggered fade-in animations
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
+  const lodging = days * costPerDay;
+  const foodTotal = days * people * food;
+  const total = lodging + foodTotal + other;
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
-  });
-}, observerOptions);
+  // Headline numbers
+  document.getElementById('totalCost').textContent = money.format(total);
+  document.getElementById('perPerson').textContent = money.format(people > 0 ? total / people : 0);
+  document.getElementById('perDay').textContent = money.format(days > 0 ? total / days : 0);
 
-// Add fade-in class to animated elements
-document.querySelectorAll(
-  '.action-card, .value-item, .service-card, .pi-feature, .extra-card, .review-card, .contact-item, .section-header, .about-card, .pi-sidebar'
-).forEach((el, i) => {
-  el.classList.add('fade-in');
-  el.style.transitionDelay = `${(i % 4) * 0.1}s`;
-  observer.observe(el);
-});
+  // Breakdown
+  document.getElementById('bdLodging').textContent = money.format(lodging);
+  document.getElementById('bdFood').textContent = money.format(foodTotal);
+  document.getElementById('bdOther').textContent = money.format(other);
 
-// Active nav link highlighting
-const sections = document.querySelectorAll('section[id]');
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY + 100;
-  sections.forEach(section => {
-    const top = section.offsetTop;
-    const height = section.offsetHeight;
-    const id = section.getAttribute('id');
-    const link = document.querySelector(`.nav-links a[href="#${id}"]`);
-    if (link) {
-      link.classList.toggle('active-link', scrollY >= top && scrollY < top + height);
-    }
-  });
-});
+  // Proportional bar
+  const pct = v => (total > 0 ? (v / total) * 100 : 0);
+  document.getElementById('barLodging').style.width = pct(lodging) + '%';
+  document.getElementById('barFood').style.width = pct(foodTotal) + '%';
+  document.getElementById('barOther').style.width = pct(other) + '%';
+}
 
-// Smooth form submission feedback
-const form = document.getElementById('contactForm');
-if (form) {
-  form.addEventListener('submit', (e) => {
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
+function save() {
+  const data = {};
+  FIELDS.forEach(id => { data[id] = inputs[id].value; });
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // Storage may be unavailable (e.g. private mode); calculator still works.
+  }
+}
 
-    // Build mailto body
-    const body = `Name: ${name}%0AEmail: ${email}%0APhone: ${phone}%0ASubject: ${subject}%0AMessage: ${message}`;
-    const mailtoLink = `mailto:sandmpharmacy1@gmail.com?subject=${encodeURIComponent(subject || 'Website Inquiry')}&body=${body}`;
-
-    e.preventDefault();
-    window.location.href = mailtoLink;
+function load() {
+  let data;
+  try {
+    data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch (e) {
+    data = null;
+  }
+  if (!data) return;
+  FIELDS.forEach(id => {
+    if (data[id] !== undefined) inputs[id].value = data[id];
   });
 }
+
+// Wire up live updates
+FIELDS.forEach(id => {
+  inputs[id].addEventListener('input', () => {
+    calculate();
+    save();
+  });
+});
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click', () => {
+  FIELDS.forEach(id => { inputs[id].value = ''; });
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) { /* ignore */ }
+  calculate();
+  inputs.people.focus();
+});
+
+// Restore saved values and render on load
+load();
+calculate();
